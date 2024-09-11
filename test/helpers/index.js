@@ -7,8 +7,8 @@ const SCHEMA_NAME = settings.connection.database;
 
 exports.SCHEMA_NAME = SCHEMA_NAME;
 
-exports.init = function(done) {
-  const connObj = {...settings.connection};
+exports.init = function (done) {
+  const connObj = { ...settings.connection };
   // database doesn't exist at this time
   delete connObj.database;
   const conn = mysql.createConnection(connObj);
@@ -16,34 +16,30 @@ exports.init = function(done) {
   querySequence(
     conn,
     [
-      'SET GLOBAL sql_mode = \'' + settings.sessionSqlMode + '\'',
+      "SET GLOBAL sql_mode = '" + settings.sessionSqlMode + "'",
       `DROP DATABASE IF EXISTS ${SCHEMA_NAME}`,
       `CREATE DATABASE ${SCHEMA_NAME}`,
       `USE ${SCHEMA_NAME}`,
-      'RESET MASTER',
+      'RESET MASTER'
       // 'SELECT VERSION() AS version'
     ],
-    error => {
+    (error) => {
       conn.destroy();
       done(error);
     }
   );
 };
 
-exports.execute = function(queries, done) {
+exports.execute = function (queries, done) {
   const conn = mysql.createConnection(settings.connection);
-  querySequence(
-    conn,
-    queries,
-    (error, result) => {
-      conn.destroy();
-      done(error, result);
-    }
-  );
+  querySequence(conn, queries, (error, result) => {
+    conn.destroy();
+    done(error, result);
+  });
 };
 
-const checkVersion = function(expected, actual) {
-  const parts = expected.split('.').map(part => parseInt(part, 10));
+const checkVersion = function (expected, actual) {
+  const parts = expected.split('.').map((part) => parseInt(part, 10));
   for (let i = 0; i < parts.length; i++) {
     if (actual[i] == parts[i]) {
       continue;
@@ -53,8 +49,8 @@ const checkVersion = function(expected, actual) {
   return true;
 };
 
-exports.requireVersion = function(expected, done) {
-  const connObj = {...settings.connection};
+exports.requireVersion = function (expected, done) {
+  const connObj = { ...settings.connection };
   // database doesn't exist at this time
   delete connObj.database;
   const conn = mysql.createConnection(connObj);
@@ -65,10 +61,10 @@ exports.requireVersion = function(expected, done) {
       throw err;
     }
 
-    let ver = results[results.length - 1][0]
-      .version.split('-')[0]
+    let ver = results[results.length - 1][0].version
+      .split('-')[0]
       .split('.')
-      .map(part => parseInt(part, 10));
+      .map((part) => parseInt(part, 10));
 
     if (checkVersion(expected, ver)) {
       done();
@@ -77,8 +73,8 @@ exports.requireVersion = function(expected, done) {
 };
 
 let id = 100;
-exports.serverId = function() {
-  id ++;
+exports.serverId = function () {
+  id++;
   return id;
 };
 
