@@ -1,5 +1,5 @@
 {
-  "name": "@vlasky/zongji",
+  "name": "powersync-mysql-zongji",
   "version": "0.5.9",
   "description": "A MySQL 8.0-compatible fork of ZongJi - a MySQL binlog listener for Node.js.",
   "main": "index.js",
@@ -8,17 +8,17 @@
   },
   "scripts": {
     "test": "tap --bail --no-coverage --jobs=1 test/*.js",
-    "lint": "eslint ."
+    "format": "prettier --write ."
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/vlasky/zongji"
+    "url": "https://github.com/powersync-ja/powersync-mysql-zongji"
   },
   "keywords": [
     "mysql",
     "binlog"
   ],
-  "author": "Vlad Lasky <github@vladlasky.com> (https://github.com/vlasky)",
+  "author": "JourneyApps",
   "contributors": [
     "Nevill <nevill.dutt@gmail.com> (https://github.com/nevill)",
     "numtel <ben@latenightsketches.com> (https://github.com/numtel)",
@@ -33,7 +33,8 @@
     "node": ">= 8.0"
   },
   "devDependencies": {
-    "eslint": "6.8.0",
+    "@changesets/cli": "^2.27.3",
+    "prettier": "^2.8.8",
     "tap": "14.10.7"
   },
   "dependencies": {
