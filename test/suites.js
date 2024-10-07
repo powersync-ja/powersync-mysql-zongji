@@ -19,7 +19,7 @@ tap.test('Filtering', (t) => {
 });
 
 tap.test('RowImage', (t) => {
-  require(`./rowImage`);
+  require(`./rowimage`);
   t.end();
 });
 
