@@ -22,9 +22,9 @@ jobs:
       - name: Start MySQL
         run: |
           docker run \
+          --name zongji_test \
           -e MYSQL_ROOT_PASSWORD=my_password \
           -d mysql:${{ matrix.mysql-version }}
-          --name zongji_test \
           --server-id=1 \
           --log-bin=/var/lib/mysql/mysql-bin.log \
           --binlog-format=row \
