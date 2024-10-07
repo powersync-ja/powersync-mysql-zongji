@@ -44,7 +44,7 @@ testDb.requireVersion('5.6.2', () => {
     test.test('update a record', (test) => {
       const events = [];
       const zongji = new ZongJi(settings.connection);
-      test.tearDown(() => zongji.stop());
+      test.teardown(() => zongji.stop());
 
       zongji.on('ready', () => {
         testDb.execute([`UPDATE ${TEST_TABLE} SET age=age+1 WHERE id=1`], (err) => {
@@ -120,7 +120,7 @@ testDb.requireVersion('5.6.2', () => {
     test.test('update a record', (test) => {
       const events = [];
       const zongji = new ZongJi(settings.connection);
-      test.tearDown(() => zongji.stop());
+      test.teardown(() => zongji.stop());
 
       zongji.on('ready', () => {
         testDb.execute([`UPDATE ${TEST_TABLE} SET summary='hello again' WHERE id=1`], (err) => {

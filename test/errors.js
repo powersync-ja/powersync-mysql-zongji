@@ -16,7 +16,7 @@ tap.test('Connect to an invalid host', (test) => {
     test.end();
   });
 
-  test.tearDown(() => zongji.stop());
+  test.teardown(() => zongji.stop());
   zongji.start();
 });
 
@@ -29,11 +29,7 @@ tap.test('Initialise testing db', (test) => {
   });
 });
 
-const ACCEPTABLE_ERRORS = [
-  'PROTOCOL_CONNECTION_LOST',
-  // MySQL 5.1 emits a packet sequence error when the binlog disconnected
-  'PROTOCOL_INCORRECT_PACKET_SEQUENCE'
-];
+const ACCEPTABLE_ERRORS = ['PROTOCOL_CONNECTION_LOST', 'PROTOCOL_INCORRECT_PACKET_SEQUENCE'];
 
 tap.test('Disconnect binlog connection', (test) => {
   const zongji = new ZongJi(settings.connection);
@@ -97,7 +93,7 @@ tap.test('Events come through in sequence', (test) => {
   const UPDATE_COUNT = 5;
   const TEST_TABLE = 'reconnect_at_pos';
 
-  test.test(`prepare table ${TEST_TABLE}`, (test) => {
+  test.test(`prepare table ${TEST_TABLE}`, {}, (test) => {
     testDb.execute(
       [
         `DROP TABLE IF EXISTS ${TEST_TABLE}`,
@@ -113,7 +109,7 @@ tap.test('Events come through in sequence', (test) => {
     );
   });
 
-  test.test('when reconnect', (test) => {
+  test.test('when reconnect', {}, (test) => {
     const result = [];
 
     function startPeriodicallyWriting() {
@@ -175,7 +171,7 @@ tap.test('Events come through in sequence', (test) => {
           position: first.get('position')
         });
 
-        test.tearDown(() => second.stop());
+        test.teardown(() => second.stop());
       });
       setTimeout(() => first.stop(), NEW_INST_TIMEOUT);
     });

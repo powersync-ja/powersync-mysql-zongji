@@ -35,7 +35,7 @@
   "devDependencies": {
     "@changesets/cli": "^2.27.3",
     "prettier": "^2.8.8",
-    "tap": "14.10.7"
+    "tap": "^21.0.1"
   },
   "dependencies": {
     "big-integer": "1.6.51",
