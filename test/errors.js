@@ -12,7 +12,6 @@ tap.test('Connect to an invalid host', (test) => {
   });
 
   zongji.on('error', function (error) {
-    console.log('Real Error was:', error);
     // When running in CI the error is EAI_AGAIN because the DNS lookup for the fake host fails
     test.ok(['ENOTFOUND', 'ETIMEDOUT', 'EAI_AGAIN'].indexOf(error.code) !== -1);
     test.end();
@@ -25,7 +24,6 @@ tap.test('Connect to an invalid host', (test) => {
 tap.test('Initialise testing db', (test) => {
   testDb.init((err) => {
     if (err) {
-      console.log('Error was thrown:', err);
       return test.threw(err);
     }
     test.end();
