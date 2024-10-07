@@ -23,6 +23,7 @@ tap.test('Connect to an invalid host', (test) => {
 tap.test('Initialise testing db', (test) => {
   testDb.init((err) => {
     if (err) {
+      console.log('Error was thrown:', err);
       return test.threw(err);
     }
     test.end();
