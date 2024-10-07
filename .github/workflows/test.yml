@@ -24,6 +24,7 @@ jobs:
           docker run \
           --name zongji_test \
           -e MYSQL_ROOT_PASSWORD=my_password \
+          -p 3306:3306 \
           -d mysql:${{ matrix.mysql-version }} \
           --server-id=1 \
           --log-bin=/var/lib/mysql/mysql-bin.log \

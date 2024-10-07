@@ -13,10 +13,9 @@ exports.init = async function (done) {
   delete connObj.database;
   const conn = mysql.createConnection(connObj);
 
+  // Syntax for resetting the binlog changed with MySQL 8.4
   const version = await getVersion();
   const cleanupQuery = version >= '8.4' ? 'RESET BINARY LOGS AND GTIDS' : 'RESET MASTER';
-
-  // Syntax for resetting the binlog changed with MySQL 8.4
 
   querySequence(
     conn,
