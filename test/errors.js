@@ -6,14 +6,15 @@ const testDb = require('./helpers');
 
 tap.test('Connect to an invalid host', (test) => {
   const zongji = new ZongJi({
-    host: '127.0.0.2', // Non existent host
+    host: 'wronghost',
     user: 'wronguser',
     password: 'wrongpass'
   });
 
   zongji.on('error', function (error) {
     console.log('Real Error was:', error);
-    test.ok(['ENOTFOUND', 'ETIMEDOUT'].indexOf(error.code) !== -1);
+    // When running in CI the error is EAI_AGAIN because the DNS lookup for the fake host fails
+    test.ok(['ENOTFOUND', 'ETIMEDOUT', 'EAI_AGAIN'].indexOf(error.code) !== -1);
     test.end();
   });
 
