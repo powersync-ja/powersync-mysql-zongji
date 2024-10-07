@@ -7,20 +7,25 @@ const SCHEMA_NAME = settings.connection.database;
 
 exports.SCHEMA_NAME = SCHEMA_NAME;
 
-exports.init = function (done) {
+exports.init = async function (done) {
   const connObj = { ...settings.connection };
   // database doesn't exist at this time
   delete connObj.database;
   const conn = mysql.createConnection(connObj);
+
+  const version = await getVersion();
+  const cleanupQuery = version >= '8.4' ? 'RESET BINARY LOGS AND GTIDS' : 'RESET MASTER';
+
+  // Syntax for resetting the binlog changed with MySQL 8.4
 
   querySequence(
     conn,
     [
       "SET GLOBAL sql_mode = '" + settings.sessionSqlMode + "'",
       `DROP DATABASE IF EXISTS ${SCHEMA_NAME}`,
-      `CREATE DATABASE ${SCHEMA_NAME}`,
+      `CREATE DATABASE IF NOT EXISTS ${SCHEMA_NAME}`,
       `USE ${SCHEMA_NAME}`,
-      'RESET MASTER'
+      cleanupQuery
       // 'SELECT VERSION() AS version'
     ],
     (error) => {
@@ -38,6 +43,25 @@ exports.execute = function (queries, done) {
   });
 };
 
+const getVersion = function () {
+  const connObj = { ...settings.connection };
+  // database doesn't exist at this time
+  delete connObj.database;
+  const conn = mysql.createConnection(connObj);
+
+  return new Promise((resolve, reject) => {
+    querySequence(conn, ['SELECT VERSION() AS version'], (err, results) => {
+      conn.destroy();
+
+      if (err) {
+        reject(err);
+      }
+
+      resolve(results[results.length - 1][0].version);
+    });
+  });
+};
+
 const checkVersion = function (expected, actual) {
   const parts = expected.split('.').map((part) => parseInt(part, 10));
   for (let i = 0; i < parts.length; i++) {
@@ -49,7 +73,7 @@ const checkVersion = function (expected, actual) {
   return true;
 };
 
-exports.requireVersion = function (expected, done) {
+const requireVersion = function (expected, done) {
   const connObj = { ...settings.connection };
   // database doesn't exist at this time
   delete connObj.database;
@@ -71,6 +95,8 @@ exports.requireVersion = function (expected, done) {
     }
   });
 };
+
+exports.requireVersion = requireVersion;
 
 let id = 100;
 exports.serverId = function () {

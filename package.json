@@ -1,13 +1,14 @@
 {
   "name": "powersync-mysql-zongji",
-  "version": "0.5.9",
+  "version": "0.0.1",
   "description": "A MySQL 8.0-compatible fork of ZongJi - a MySQL binlog listener for Node.js.",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "tap --bail --no-coverage --jobs=1 test/*.js",
+    "release": "pnpm changeset publish",
+    "test": "tap -- --no-cov --jobs=1 --sequential test/suites.js",
     "format": "prettier --write ."
   },
   "repository": {
