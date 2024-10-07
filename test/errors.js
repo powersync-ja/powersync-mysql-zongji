@@ -12,6 +12,7 @@ tap.test('Connect to an invalid host', (test) => {
   });
 
   zongji.on('error', function (error) {
+    console.log('Real Error was:', error);
     test.ok(['ENOTFOUND', 'ETIMEDOUT'].indexOf(error.code) !== -1);
     test.end();
   });

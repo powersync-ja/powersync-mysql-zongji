@@ -53,6 +53,7 @@ const getVersion = function () {
       conn.destroy();
 
       if (err) {
+        console.log('Error getting version:', err);
         reject(err);
       }
 
