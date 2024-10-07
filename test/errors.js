@@ -6,7 +6,7 @@ const testDb = require('./helpers');
 
 tap.test('Connect to an invalid host', (test) => {
   const zongji = new ZongJi({
-    host: 'wronghost',
+    host: '127.0.0.2', // Non existent host
     user: 'wronguser',
     password: 'wrongpass'
   });
