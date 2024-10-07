@@ -24,10 +24,10 @@ jobs:
           docker run \
           --name zongji_test \
           -e MYSQL_ROOT_PASSWORD=my_password \
-          -d mysql:${{ matrix.mysql-version }}
+          -d mysql:${{ matrix.mysql-version }} \
           --server-id=1 \
           --log-bin=/var/lib/mysql/mysql-bin.log \
-          --binlog-format=row \
+          --binlog-format=row
 
       - name: Setup NodeJS
         uses: actions/setup-node@v4
