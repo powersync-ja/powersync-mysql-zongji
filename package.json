@@ -6,6 +6,9 @@
   "directories": {
     "test": "test"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "release": "pnpm changeset publish",
     "test": "tap run -- --disable-coverage --allow-incomplete-coverage --jobs=1 --sequential test/suites.js",
