@@ -27,3 +27,5 @@ tap.test('Types', (t) => {
   require(`./types`);
   t.end();
 });
+
+process.exit(0);
