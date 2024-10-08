@@ -1,5 +1,5 @@
 ---
-'powersync-mysql-zongji': minor
+'@powersync/mysql-zongji': minor
 ---
 
 Initial release of the powersync-mysql-zongji fork
