@@ -8,7 +8,7 @@
   },
   "scripts": {
     "release": "pnpm changeset publish",
-    "test": "tap -- --disable-coverage --allow-incomplete-coverage --allow-empty-coverage --jobs=1 --sequential test/suites.js",
+    "test": "tap run -- --disable-coverage --allow-incomplete-coverage --jobs=1 --sequential test/suites.js",
     "format": "prettier --write ."
   },
   "repository": {
