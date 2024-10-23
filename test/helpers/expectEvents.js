@@ -12,19 +12,19 @@ const MAX_WAIT = 3000;
 // @param {function} callback - Call when done, no arguments (optional)
 // @param waitIndex - Do not specify, used internally
 function expectEvents(test, events, expected, multiplier, callback, waitIndex) {
-  if (events.length < (expected.length * multiplier) && !(waitIndex > 10)) {
+  if (events.length < expected.length * multiplier && !(waitIndex > 10)) {
     // Wait for events to appear
-    setTimeout(function() {
+    setTimeout(function () {
       expectEvents(test, events, expected, multiplier, callback, (waitIndex || 0) + 1);
     }, MAX_WAIT / 10);
   } else {
-    test.strictEqual(events.length, expected.length * multiplier);
-    events.forEach(function(event, index) {
+    test.equal(events.length, expected.length * multiplier);
+    events.forEach(function (event, index) {
       const exp = expected[index % expected.length];
       for (const i in exp) {
         if (Object.prototype.hasOwnProperty.call(exp, i)) {
           if (i === '_type') {
-            test.strictEqual(event.getTypeName(), exp[i]);
+            test.equal(event.getTypeName(), exp[i]);
           } else if (String(i).substr(0, 1) === '_') {
             exp[i](test, event);
           } else {
