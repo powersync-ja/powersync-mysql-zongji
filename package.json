@@ -11,7 +11,7 @@
   },
   "scripts": {
     "release": "pnpm changeset publish",
-    "test": "tap run -- --disable-coverage --allow-incomplete-coverage --jobs=1 --sequential test/suites.js",
+    "test": "tap run --disable-coverage --allow-incomplete-coverage -- --sequential test/suites.js",
     "format": "prettier --write ."
   },
   "repository": {
