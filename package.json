@@ -22,6 +22,17 @@
     "mysql",
     "binlog"
   ],
+  "author": "Vlad Lasky (https://github.com/vlasky)",
+  "contributors": [
+    "Nevill (https://github.com/nevill)",
+    "numtel (https://github.com/numtel)",
+    "rfanth (https://github.com/rfanth)",
+    "Alexander Radyushin (https://github.com/fjedi)",
+    "Yousef El-Dardiry (https://github.com/YousefED)",
+    "Roopendra Talekar (https://github.com/roopen219)",
+    "Juan Ferrer Toribio (https://github.com/juan-ferrer-toribio)",
+    "JourneyApps"
+  ],
   "license": "MIT",
   "engines": {
     "node": ">=20.0.0"
