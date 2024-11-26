@@ -1,40 +1,46 @@
 {
-  "name": "@vlasky/zongji",
-  "version": "0.5.9",
-  "description": "A MySQL 8.0-compatible fork of ZongJi - a MySQL binlog listener for Node.js.",
+  "name": "@powersync/mysql-zongji",
+  "version": "0.0.1",
+  "description": "A MySQL 8.0 >= compatible fork of ZongJi - a MySQL binlog listener for Node.js.",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "test": "tap --bail --no-coverage --jobs=1 test/*.js",
-    "lint": "eslint ."
+    "release": "pnpm changeset publish",
+    "test": "tap run --disable-coverage --allow-incomplete-coverage -- --sequential test/suites.js",
+    "format": "prettier --write ."
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/vlasky/zongji"
+    "url": "powersync-ja/powersync-mysql-zongji"
   },
   "keywords": [
     "mysql",
     "binlog"
   ],
-  "author": "Vlad Lasky <github@vladlasky.com> (https://github.com/vlasky)",
+  "author": "Vlad Lasky (https://github.com/vlasky)",
   "contributors": [
-    "Nevill <nevill.dutt@gmail.com> (https://github.com/nevill)",
-    "numtel <ben@latenightsketches.com> (https://github.com/numtel)",
-    "rfanth <rfa@rfanth.com> (https://github.com/rfanth)",
-    "Alexander Radyushin <alexander@fjedi.com> (https://github.com/fjedi)",
-    "Yousef El-Dardiry <yousefdardiry@gmail.com> (https://github.com/YousefED)",
-    "Roopendra Talekar <roopendratalekar@gmail.com> (https://github.com/roopen219)",
-    "Juan Ferrer Toribio (https://github.com/juan-ferrer-toribio)"
+    "Nevill (https://github.com/nevill)",
+    "numtel (https://github.com/numtel)",
+    "rfanth (https://github.com/rfanth)",
+    "Alexander Radyushin (https://github.com/fjedi)",
+    "Yousef El-Dardiry (https://github.com/YousefED)",
+    "Roopendra Talekar (https://github.com/roopen219)",
+    "Juan Ferrer Toribio (https://github.com/juan-ferrer-toribio)",
+    "JourneyApps"
   ],
   "license": "MIT",
   "engines": {
-    "node": ">= 8.0"
+    "node": ">=20.0.0"
   },
   "devDependencies": {
-    "eslint": "6.8.0",
-    "tap": "14.10.7"
+    "@changesets/cli": "^2.27.3",
+    "prettier": "^2.8.8",
+    "tap": "^21.0.1"
   },
   "dependencies": {
     "big-integer": "1.6.51",
