@@ -284,6 +284,14 @@ ZongJi.prototype.stop = function () {
   });
 };
 
+ZongJi.prototype.pause = function () {
+  this.connection.pause();
+};
+
+ZongJi.prototype.resume = function () {
+  this.connection.resume();
+};
+
 // It includes every events by default.
 ZongJi.prototype._skipEvent = function (name) {
   const includes = this.filters.includeEvents;
