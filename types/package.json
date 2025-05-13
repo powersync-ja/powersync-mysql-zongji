@@ -1,0 +1,13 @@
+{
+  "name": "@powersync/types-mysql-zongji",
+  "version": "0.0.1",
+  "description": "Types package for Powersync MySQL ZongJi",
+  "main": "",
+  "types": "index.d.ts",
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}
