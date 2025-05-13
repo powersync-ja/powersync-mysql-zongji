@@ -1,6 +1,6 @@
 {
   "name": "@powersync/types-mysql-zongji",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "Types package for Powersync MySQL ZongJi",
   "main": "",
   "types": "index.d.ts",
