@@ -4,7 +4,6 @@
   "description": "A MySQL 8.0 >= compatible fork of ZongJi - a MySQL binlog listener for Node.js.",
   "main": "index.js",
   "types": "types/index.d.ts",
-  "type": "module",
   "directories": {
     "test": "test"
   },
