@@ -4,6 +4,9 @@
   "description": "Types package for Powersync MySQL ZongJi",
   "main": "",
   "types": "index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc -b"
   },
