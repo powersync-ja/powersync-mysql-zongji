@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "A MySQL 8.0 >= compatible fork of ZongJi - a MySQL binlog listener for Node.js.",
   "main": "index.js",
+  "types": "types/index.d.ts",
   "directories": {
     "test": "test"
   },
@@ -11,7 +12,6 @@
   },
   "scripts": {
     "release": "pnpm changeset publish",
-    "build": "cd types && tsc -b",
     "test": "tap run --disable-coverage --allow-incomplete-coverage -- --sequential test/suites.js",
     "format": "prettier --write ."
   },
