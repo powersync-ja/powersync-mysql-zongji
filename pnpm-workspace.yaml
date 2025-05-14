@@ -1,3 +1,5 @@
 packages:
-  - 'lib'
+  - './'
   - 'types'
+  # exclude packages that are inside test directories
+  - '!test/*'
