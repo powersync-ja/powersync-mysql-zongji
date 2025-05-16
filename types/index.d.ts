@@ -116,7 +116,7 @@ export interface MySQLConnection {
   query(sql: string, callback: (error: any, results: any, fields: any) => void): void;
 }
 
-export declare class ZongJi {
+export default class ZongJi {
   connection: MySQLConnection;
   constructor(options: ZongjiOptions);
 
