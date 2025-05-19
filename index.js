@@ -319,4 +319,6 @@ ZongJi.prototype._skipSchema = function (database, table) {
   return excluded || !included;
 };
 
-module.exports = ZongJi;
+module.exports = {
+  ZongJi
+};

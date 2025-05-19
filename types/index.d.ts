@@ -116,7 +116,7 @@ export interface MySQLConnection {
   query(sql: string, callback: (error: any, results: any, fields: any) => void): void;
 }
 
-export default class ZongJi {
+export declare class ZongJi {
   connection: MySQLConnection;
   constructor(options: ZongjiOptions);
 
@@ -125,5 +125,5 @@ export default class ZongJi {
   pause(): void;
   resume(): void;
 
-  on(type: 'binlog' | string, callback: (event: BinLogEvent) => void);
+  on(type: 'binlog' | string, callback: (event: BinLogEvent) => void): void;
 }
