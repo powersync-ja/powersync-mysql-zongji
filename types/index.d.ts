@@ -76,7 +76,8 @@ export type BaseBinLogEvent = {
    */
   size: number;
   /**
-   *  Unique identifier for table that this event relates to. This ID changes when a table is altered.
+   *  Identifier for table that this event relates to. This value can change between server restarts and can be reused, so it is not a reliable identifier.
+   *  Also, changes when a table schema has been altered.
    */
   tableId: number;
   flags: number;

@@ -240,9 +240,8 @@ ZongJi.prototype.start = function (options = {}) {
             this.emit('binlog', event);
             this.connection.resume();
           });
-          return;
         }
-        break;
+        return;
       }
       case 'Rotate':
         if (this.options.filename !== event.binlogName) {
