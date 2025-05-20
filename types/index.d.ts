@@ -75,6 +75,10 @@ export type BaseBinLogEvent = {
    * Size of this event
    */
   size: number;
+  /**
+   *  Unique identifier for table that this event relates to. This ID changes when a table is altered.
+   */
+  tableId: number;
   flags: number;
   useChecksum: boolean;
 };
@@ -107,7 +111,22 @@ export type BinLogUpdateEvent = Omit<BinLogMutationEvent, 'rows'> & {
   }[];
 };
 
-export type BinLogEvent = BinLogRotationEvent | BinLogGTIDLogEvent | BinLogXidEvent | BinLogMutationEvent;
+export type BinLogTableMapEvent = BaseBinLogEvent & {
+  schemaName: string;
+  tableName: string;
+  columnCount: number;
+  /**
+   *  Column types for this table. This is a list of MySQL column type ids
+   */
+  columnTypes: number[];
+};
+
+export type BinLogEvent =
+  | BinLogRotationEvent
+  | BinLogGTIDLogEvent
+  | BinLogXidEvent
+  | BinLogMutationEvent
+  | BinLogTableMapEvent;
 
 // @vlasky/mysql Connection
 export interface MySQLConnection {
