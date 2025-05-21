@@ -99,7 +99,6 @@ export type BinLogXidEvent = BaseBinLogEvent & {
 };
 
 export type BinLogMutationEvent = BaseBinLogEvent & {
-  tableId: number;
   numberOfColumns: number;
   tableMap: Record<string, TableMapEntry>;
   rows: Record<string, any>[];
@@ -113,6 +112,7 @@ export type BinLogUpdateEvent = Omit<BinLogMutationEvent, 'rows'> & {
 };
 
 export type BinLogTableMapEvent = BaseBinLogEvent & {
+  tableMap: Record<string, TableMapEntry>;
   schemaName: string;
   tableName: string;
   columnCount: number;

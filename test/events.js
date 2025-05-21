@@ -37,7 +37,7 @@ tap.test('Binlog option startAtEnd', (test) => {
   test.test(`prepare new table ${TEST_TABLE}`, (test) => {
     testDb.execute(
       [
-        'FLUSH LOGS', // Ensure ZongJi perserveres through a rotation event
+        'FLUSH LOGS', // Ensure ZongJi perseveres through a rotation event
         `DROP TABLE IF EXISTS ${TEST_TABLE}`,
         `CREATE TABLE ${TEST_TABLE} (col INT UNSIGNED)`,
         `INSERT INTO ${TEST_TABLE} (col) VALUES (12)`
