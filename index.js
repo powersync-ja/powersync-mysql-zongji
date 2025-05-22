@@ -22,6 +22,7 @@ function ZongJi(dsn) {
   this.ctrlCallbacks = [];
   this.tableMap = {};
   this.ready = false;
+  this.stopped = false;
   this.useChecksum = false;
 
   this._establishConnection(dsn);
@@ -261,11 +262,13 @@ ZongJi.prototype.start = function (options = {}) {
 
   Promise.all(promises)
     .then(() => {
-      this.BinlogClass = initBinlogClass(this);
-      this.ready = true;
-      this.emit('ready');
+      if (!this.stopped) {
+        this.BinlogClass = initBinlogClass(this);
+        this.ready = true;
+        this.emit('ready');
 
-      this.connection._protocol._enqueue(new this.BinlogClass(binlogHandler));
+        this.connection._protocol._enqueue(new this.BinlogClass(binlogHandler));
+      }
     })
     .catch((err) => {
       this.emit('error', err);
@@ -281,6 +284,7 @@ ZongJi.prototype.stop = function () {
     }
     this.emit('stopped');
   });
+  this.stopped = true;
 };
 
 ZongJi.prototype.pause = function () {
