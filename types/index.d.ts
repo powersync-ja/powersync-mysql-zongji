@@ -1,5 +1,14 @@
 import { Socket } from 'net';
 
+/**
+ *  The types described here were added on an adhoc basis based on requirements in the Powersync Service.
+ *  They are not complete.
+ */
+
+/**
+ *  Connection options for the MySQL connection that Zongji will use. For a complete list and description see:
+ *  https://www.npmjs.com/package/@vlasky/mysql#connection-options
+ */
 export type ZongjiOptions = {
   host: string;
   user: string;
@@ -8,11 +17,18 @@ export type ZongjiOptions = {
   timeZone?: string;
 };
 
+/**
+ *  Record specifying a database and specific tables. ie. ['MyDatabase']: ['table1', 'table2']
+ *  Alternatively specifying true will include all tables in the database.
+ */
 interface DatabaseFilter {
   [databaseName: string]: string[] | true;
 }
 
 export type StartOptions = {
+  /**
+   *  List specifying which binlog events to listen for. When not specified, all events are included.
+   */
   includeEvents?: string[];
   excludeEvents?: string[];
   /**
@@ -51,6 +67,10 @@ export type ColumnSchema = {
 export type ColumnDefinition = {
   name: string;
   charset: string;
+  /**
+   *  MySQl column type constant. For a list of type mappings see:
+   *  https://github.com/mysqljs/mysql/blob/master/lib/protocol/constants/types.js
+   */
   type: number;
   metadata: Record<string, any>;
 };
@@ -67,12 +87,11 @@ export type BaseBinLogEvent = {
   getEventName(): string;
 
   /**
-   * Next position in BinLog file to read from after
-   * this event.
+   * Next position in BinLog file to read from after this event.
    */
   nextPosition: number;
   /**
-   * Size of this event
+   * Size in bytes of this event
    */
   size: number;
   /**
@@ -98,13 +117,20 @@ export type BinLogXidEvent = BaseBinLogEvent & {
   xid: number;
 };
 
-export type BinLogMutationEvent = BaseBinLogEvent & {
+export type BinLogRowEvent = BaseBinLogEvent & {
+  /**
+   *  The number of columns affected by this row event
+   */
   numberOfColumns: number;
-  tableMap: Record<string, TableMapEntry>;
+  /**
+   *  TableMap describing the current schema. Format:
+   *  [TableId]: TableMapEntry
+   */
+  tableMap: Record<number, TableMapEntry>;
   rows: Record<string, any>[];
 };
 
-export type BinLogUpdateEvent = Omit<BinLogMutationEvent, 'rows'> & {
+export type BinLogRowUpdateEvent = Omit<BinLogRowEvent, 'rows'> & {
   rows: {
     before: Record<string, any>;
     after: Record<string, any>;
@@ -112,7 +138,11 @@ export type BinLogUpdateEvent = Omit<BinLogMutationEvent, 'rows'> & {
 };
 
 export type BinLogTableMapEvent = BaseBinLogEvent & {
-  tableMap: Record<string, TableMapEntry>;
+  /**
+   *  TableMap describing the current schema. Format:
+   *  [TableId]: TableMapEntry
+   */
+  tableMap: Record<number, TableMapEntry>;
   schemaName: string;
   tableName: string;
   columnCount: number;
@@ -126,7 +156,8 @@ export type BinLogEvent =
   | BinLogRotationEvent
   | BinLogGTIDLogEvent
   | BinLogXidEvent
-  | BinLogMutationEvent
+  | BinLogRowEvent
+  | BinLogRowUpdateEvent
   | BinLogTableMapEvent;
 
 // @vlasky/mysql Connection
