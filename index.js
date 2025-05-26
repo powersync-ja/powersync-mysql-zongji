@@ -192,6 +192,10 @@ ZongJi.prototype.start = function (options = {}) {
   this._options(options);
   this._filters(options);
 
+  // Don't start listener if it has already explicitly been stopped
+  if (this.stopped) {
+    return;
+  }
   const testChecksum = (resolve, reject) => {
     this._isChecksumEnabled((err, checksumEnabled) => {
       if (err) {
@@ -254,25 +258,26 @@ ZongJi.prototype.start = function (options = {}) {
     this.emit('binlog', event);
   };
 
-  let promises = [new Promise(testChecksum)];
+  if (!this.stopped) {
+    let promises = [new Promise(testChecksum)];
 
-  if (this.options.startAtEnd) {
-    promises.push(new Promise(findBinlogEnd));
-  }
+    if (this.options.startAtEnd) {
+      promises.push(new Promise(findBinlogEnd));
+    }
 
-  Promise.all(promises)
-    .then(() => {
-      if (!this.stopped) {
+    Promise.all(promises)
+      .then(() => {
         this.BinlogClass = initBinlogClass(this);
         this.ready = true;
         this.emit('ready');
-
-        this.connection._protocol._enqueue(new this.BinlogClass(binlogHandler));
-      }
-    })
-    .catch((err) => {
-      this.emit('error', err);
-    });
+        if (!this.stopped) {
+          this.connection._protocol._enqueue(new this.BinlogClass(binlogHandler));
+        }
+      })
+      .catch((err) => {
+        this.emit('error', err);
+      });
+  }
 };
 
 ZongJi.prototype.stop = function () {
