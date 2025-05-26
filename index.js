@@ -192,10 +192,6 @@ ZongJi.prototype.start = function (options = {}) {
   this._options(options);
   this._filters(options);
 
-  // Don't start listener if it has already explicitly been stopped
-  if (this.stopped) {
-    return;
-  }
   const testChecksum = (resolve, reject) => {
     this._isChecksumEnabled((err, checksumEnabled) => {
       if (err) {
@@ -258,41 +254,38 @@ ZongJi.prototype.start = function (options = {}) {
     this.emit('binlog', event);
   };
 
-  if (!this.stopped) {
-    let promises = [new Promise(testChecksum)];
+  let promises = [new Promise(testChecksum)];
 
-    if (this.options.startAtEnd) {
-      promises.push(new Promise(findBinlogEnd));
-    }
-
-    Promise.all(promises)
-      .then(() => {
-        this.BinlogClass = initBinlogClass(this);
-        if (!this.stopped) {
-          this.connection._protocol._enqueue(new this.BinlogClass(binlogHandler));
-          this.ready = true;
-          this.emit('ready');
-        }
-      })
-      .catch((err) => {
-        // Don't emit errors if the listener is already stopped
-        if (!this.stopped) {
-          this.emit('error', err);
-        }
-      });
+  if (this.options.startAtEnd) {
+    promises.push(new Promise(findBinlogEnd));
   }
+
+  Promise.all(promises)
+    .then(() => {
+      this.BinlogClass = initBinlogClass(this);
+      if (!this.stopped) {
+        this.connection._protocol._enqueue(new this.BinlogClass(binlogHandler));
+        this.ready = true;
+        this.emit('ready');
+      }
+    })
+    .catch((err) => {
+      this.emit('error', err);
+    });
 };
 
 ZongJi.prototype.stop = function () {
-  // Binary log connection does not end with destroy()
-  this.connection.destroy();
-  this.ctrlConnection.query('KILL ' + this.connection.threadId, () => {
-    if (this.ctrlConnectionOwner) {
-      this.ctrlConnection.destroy();
-    }
-    this.emit('stopped');
-  });
-  this.stopped = true;
+  if (!this.stopped) {
+    this.stopped = true;
+    // Binary log connection does not end with destroy()
+    this.connection.destroy();
+    this.ctrlConnection.query('KILL ' + this.connection.threadId, () => {
+      if (this.ctrlConnectionOwner) {
+        this.ctrlConnection.destroy();
+      }
+      this.emit('stopped');
+    });
+  }
 };
 
 ZongJi.prototype.pause = function () {

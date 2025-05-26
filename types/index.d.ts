@@ -11,6 +11,7 @@ import { Socket } from 'net';
  */
 export type ZongjiOptions = {
   host: string;
+  port?: number;
   user: string;
   password: string;
   dateStrings?: boolean;
@@ -168,6 +169,7 @@ export interface MySQLConnection {
 }
 
 export declare class ZongJi {
+  stopped: boolean;
   connection: MySQLConnection;
   constructor(options: ZongjiOptions);
 
