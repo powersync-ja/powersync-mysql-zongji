@@ -268,14 +268,17 @@ ZongJi.prototype.start = function (options = {}) {
     Promise.all(promises)
       .then(() => {
         this.BinlogClass = initBinlogClass(this);
-        this.ready = true;
-        this.emit('ready');
         if (!this.stopped) {
           this.connection._protocol._enqueue(new this.BinlogClass(binlogHandler));
+          this.ready = true;
+          this.emit('ready');
         }
       })
       .catch((err) => {
-        this.emit('error', err);
+        // Don't emit errors if the listener is already stopped
+        if (!this.stopped) {
+          this.emit('error', err);
+        }
       });
   }
 };
