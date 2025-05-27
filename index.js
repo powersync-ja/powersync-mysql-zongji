@@ -193,6 +193,9 @@ ZongJi.prototype.start = function (options = {}) {
   this._filters(options);
 
   const testChecksum = (resolve, reject) => {
+    if (this.stopped) {
+      resolve();
+    }
     this._isChecksumEnabled((err, checksumEnabled) => {
       if (err) {
         reject(err);
@@ -204,6 +207,9 @@ ZongJi.prototype.start = function (options = {}) {
   };
 
   const findBinlogEnd = (resolve, reject) => {
+    if (this.stopped) {
+      resolve();
+    }
     this._findBinlogEnd((err, result) => {
       if (err) {
         return reject(err);
@@ -279,7 +285,7 @@ ZongJi.prototype.stop = function () {
     this.stopped = true;
     // Binary log connection does not end with destroy()
     this.connection.destroy();
-    this.ctrlConnection.query('KILL ' + this.connection.threadId, () => {
+    this.ctrlConnection.query('KILL ' + this.connection.threadId, (err, result) => {
       if (this.ctrlConnectionOwner) {
         this.ctrlConnection.destroy();
       }
