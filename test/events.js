@@ -454,10 +454,11 @@ tap.test('Pause/Resume Binlog', (test) => {
     });
   });
 
-  tap.test('Pausing binlog stops events', (test) => {
+  test.test('Pausing binlog stops events', (test) => {
     const events = [];
     const zongji = new ZongJi(settings.connection);
     test.teardown(() => zongji.stop());
+    let paused = false;
 
     zongji.on('ready', () => {
       zongji.pause();
@@ -485,7 +486,6 @@ tap.test('Pause/Resume Binlog', (test) => {
       includeEvents: ['tablemap', 'writerows']
     });
 
-    let paused = false;
     zongji.on('binlog', (evt) => {
       if (paused) {
         // We don't expect any events while paused
