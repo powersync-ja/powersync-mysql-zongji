@@ -295,11 +295,15 @@ ZongJi.prototype.stop = function () {
 };
 
 ZongJi.prototype.pause = function () {
-  this.connection.pause();
+  if (!this.stopped) {
+    this.connection.pause();
+  }
 };
 
 ZongJi.prototype.resume = function () {
-  this.connection.resume();
+  if (!this.stopped) {
+    this.connection.resume();
+  }
 };
 
 // It includes every events by default.

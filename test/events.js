@@ -440,3 +440,77 @@ tap.test('With many columns', (test) => {
     );
   });
 });
+
+tap.test('Pause/Resume Binlog', (test) => {
+  const TEST_TABLE = 'pause_resume_test_table';
+
+  test.test(`prepare table ${TEST_TABLE}`, (test) => {
+    testDb.execute([`DROP TABLE IF EXISTS ${TEST_TABLE}`, `CREATE TABLE ${TEST_TABLE} (col INT UNSIGNED)`], (err) => {
+      if (err) {
+        return test.fail(err);
+      }
+
+      test.end();
+    });
+  });
+
+  tap.test('Pausing binlog stops events', (test) => {
+    const events = [];
+    const zongji = new ZongJi(settings.connection);
+    test.teardown(() => zongji.stop());
+
+    zongji.on('ready', () => {
+      zongji.pause();
+      paused = true;
+      testDb.execute(
+        [
+          `INSERT INTO ${TEST_TABLE} (col)
+                       VALUES (14)`
+        ],
+        (err) => {
+          if (err) {
+            return test.fail(err);
+          }
+        }
+      );
+      setTimeout(() => {
+        paused = false;
+        zongji.resume();
+      }, 20);
+    });
+
+    zongji.start({
+      startAtEnd: true,
+      serverId: testDb.serverId(),
+      includeEvents: ['tablemap', 'writerows']
+    });
+
+    let paused = false;
+    zongji.on('binlog', (evt) => {
+      if (paused) {
+        // We don't expect any events while paused
+        test.fail();
+        return;
+      }
+
+      events.push(evt);
+      if (events.length == 2) {
+        expectEvents(
+          test,
+          events,
+          [
+            tableMapEvent(TEST_TABLE),
+            {
+              _type: 'WriteRows',
+              _checkTableMap: checkTableMatches(TEST_TABLE),
+              rows: [{ col: 14 }]
+            }
+          ],
+          1,
+          () => test.end()
+        );
+      }
+    });
+  });
+  test.end();
+});
