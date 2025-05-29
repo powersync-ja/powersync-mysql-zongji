@@ -26,16 +26,14 @@ jobs:
           -e MYSQL_ROOT_PASSWORD=my_password \
           -p 3306:3306 \
           -d mysql:${{ matrix.mysql-version }} \
-          --server-id=1 \
-          --log-bin=/var/lib/mysql/mysql-bin.log \
-          --binlog-format=row
+          --log-bin=/var/lib/mysql/mysql-bin.log
 
       - name: Setup NodeJS
         uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
 
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
           version: 9

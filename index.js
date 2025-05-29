@@ -22,6 +22,7 @@ function ZongJi(dsn) {
   this.ctrlCallbacks = [];
   this.tableMap = {};
   this.ready = false;
+  this.stopped = false;
   this.useChecksum = false;
 
   this._establishConnection(dsn);
@@ -192,6 +193,9 @@ ZongJi.prototype.start = function (options = {}) {
   this._filters(options);
 
   const testChecksum = (resolve, reject) => {
+    if (this.stopped) {
+      resolve();
+    }
     this._isChecksumEnabled((err, checksumEnabled) => {
       if (err) {
         reject(err);
@@ -203,6 +207,9 @@ ZongJi.prototype.start = function (options = {}) {
   };
 
   const findBinlogEnd = (resolve, reject) => {
+    if (this.stopped) {
+      resolve();
+    }
     this._findBinlogEnd((err, result) => {
       if (err) {
         return reject(err);
@@ -240,9 +247,8 @@ ZongJi.prototype.start = function (options = {}) {
             this.emit('binlog', event);
             this.connection.resume();
           });
-          return;
         }
-        break;
+        return;
       }
       case 'Rotate':
         if (this.options.filename !== event.binlogName) {
@@ -263,10 +269,11 @@ ZongJi.prototype.start = function (options = {}) {
   Promise.all(promises)
     .then(() => {
       this.BinlogClass = initBinlogClass(this);
-      this.ready = true;
-      this.emit('ready');
-
-      this.connection._protocol._enqueue(new this.BinlogClass(binlogHandler));
+      if (!this.stopped) {
+        this.connection._protocol._enqueue(new this.BinlogClass(binlogHandler));
+        this.ready = true;
+        this.emit('ready');
+      }
     })
     .catch((err) => {
       this.emit('error', err);
@@ -274,14 +281,29 @@ ZongJi.prototype.start = function (options = {}) {
 };
 
 ZongJi.prototype.stop = function () {
-  // Binary log connection does not end with destroy()
-  this.connection.destroy();
-  this.ctrlConnection.query('KILL ' + this.connection.threadId, () => {
-    if (this.ctrlConnectionOwner) {
-      this.ctrlConnection.destroy();
-    }
-    this.emit('stopped');
-  });
+  if (!this.stopped) {
+    this.stopped = true;
+    // Binary log connection does not end with destroy()
+    this.connection.destroy();
+    this.ctrlConnection.query('KILL ' + this.connection.threadId, (err, result) => {
+      if (this.ctrlConnectionOwner) {
+        this.ctrlConnection.destroy();
+      }
+      this.emit('stopped');
+    });
+  }
+};
+
+ZongJi.prototype.pause = function () {
+  if (!this.stopped) {
+    this.connection.pause();
+  }
+};
+
+ZongJi.prototype.resume = function () {
+  if (!this.stopped) {
+    this.connection.resume();
+  }
 };
 
 // It includes every events by default.
@@ -312,3 +334,4 @@ ZongJi.prototype._skipSchema = function (database, table) {
 };
 
 module.exports = ZongJi;
+module.exports.ZongJi = ZongJi;

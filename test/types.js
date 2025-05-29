@@ -44,7 +44,12 @@ function defineTypeTest(name, fields, testRows, customTest) {
       includeEvents: ['tablemap', 'writerows', 'updaterows', 'deleterows'],
       serverId: testDb.serverId()
     });
-    zongji.on('binlog', (event) => eventLog.push(event));
+    zongji.on('binlog', (event) => {
+      // Ignore TableMap events for types test
+      if (event.getTypeName() !== 'TableMap') {
+        eventLog.push(event);
+      }
+    });
     zongji.on('error', (error) => errorLog.push(error));
     zongji.on('ready', () => {
       testDb.execute(testQueries, (error, results) => {
@@ -67,11 +72,6 @@ function defineTypeTest(name, fields, testRows, customTest) {
           test,
           eventLog,
           [
-            {
-              _type: 'TableMap',
-              tableName: TEST_TABLE,
-              schemaName: testDb.SCHEMA_NAME
-            },
             expectedWrite
           ],
           testRows.length,

@@ -143,8 +143,9 @@ Neither method requires any arguments.
 
 ## Run Tests
 
-- install [Docker](https://www.docker.com/community-edition#download)
-- run `docker-compose up` and then `./docker-test.sh`
+- Install [Docker](https://www.docker.com/community-edition#download)
+- Run `docker-compose up` and then `./docker-test.sh`
+- Some tests can be run directly, but some of the types.js tests pertaining to dates are affected by the host's timezone and are consequently brittle.
 
 ## References
 
@@ -157,7 +158,7 @@ The following resources provided valuable information that greatly assisted in c
 - https://kkaefer.com/node-cpp-modules/
 - https://dev.mysql.com/doc/internals/en/replication-protocol.html
 - https://web.archive.org/web/20200201195450/https://www.cs.wichita.edu/~chang/lecture/cs742/program/how-mysql-c-api.html
-- https://github.com/jeremycole/mysql_binlog (Ruby implemenation of MySQL binlog parser)
+- https://github.com/jeremycole/mysql_binlog (Ruby implementation of MySQL binlog parser)
 - https://dev.mysql.com/doc/internals/en/date-and-time-data-type-representation.html
 
 ## License

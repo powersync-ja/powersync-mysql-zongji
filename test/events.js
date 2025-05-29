@@ -37,7 +37,7 @@ tap.test('Binlog option startAtEnd', (test) => {
   test.test(`prepare new table ${TEST_TABLE}`, (test) => {
     testDb.execute(
       [
-        'FLUSH LOGS', // Ensure ZongJi perserveres through a rotation event
+        'FLUSH LOGS', // Ensure ZongJi perseveres through a rotation event
         `DROP TABLE IF EXISTS ${TEST_TABLE}`,
         `CREATE TABLE ${TEST_TABLE} (col INT UNSIGNED)`,
         `INSERT INTO ${TEST_TABLE} (col) VALUES (12)`
@@ -439,4 +439,78 @@ tap.test('With many columns', (test) => {
       }
     );
   });
+});
+
+tap.test('Pause/Resume Binlog', (test) => {
+  const TEST_TABLE = 'pause_resume_test_table';
+
+  test.test(`prepare table ${TEST_TABLE}`, (test) => {
+    testDb.execute([`DROP TABLE IF EXISTS ${TEST_TABLE}`, `CREATE TABLE ${TEST_TABLE} (col INT UNSIGNED)`], (err) => {
+      if (err) {
+        return test.fail(err);
+      }
+
+      test.end();
+    });
+  });
+
+  test.test('Pausing binlog stops events', (test) => {
+    const events = [];
+    const zongji = new ZongJi(settings.connection);
+    test.teardown(() => zongji.stop());
+    let paused = false;
+
+    zongji.on('ready', () => {
+      zongji.pause();
+      paused = true;
+      testDb.execute(
+        [
+          `INSERT INTO ${TEST_TABLE} (col)
+                       VALUES (14)`
+        ],
+        (err) => {
+          if (err) {
+            return test.fail(err);
+          }
+        }
+      );
+      setTimeout(() => {
+        paused = false;
+        zongji.resume();
+      }, 20);
+    });
+
+    zongji.start({
+      startAtEnd: true,
+      serverId: testDb.serverId(),
+      includeEvents: ['tablemap', 'writerows']
+    });
+
+    zongji.on('binlog', (evt) => {
+      if (paused) {
+        // We don't expect any events while paused
+        test.fail();
+        return;
+      }
+
+      events.push(evt);
+      if (events.length == 2) {
+        expectEvents(
+          test,
+          events,
+          [
+            tableMapEvent(TEST_TABLE),
+            {
+              _type: 'WriteRows',
+              _checkTableMap: checkTableMatches(TEST_TABLE),
+              rows: [{ col: 14 }]
+            }
+          ],
+          1,
+          () => test.end()
+        );
+      }
+    });
+  });
+  test.end();
 });
