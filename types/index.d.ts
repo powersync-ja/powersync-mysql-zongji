@@ -153,13 +153,22 @@ export type BinLogTableMapEvent = BaseBinLogEvent & {
   columnTypes: number[];
 };
 
+export type BinLogQueryEvent = BaseBinLogEvent & {
+  query: string;
+  executionTime: number;
+  errorCode: number;
+  schema: string;
+  statusVars: string;
+};
+
 export type BinLogEvent =
   | BinLogRotationEvent
   | BinLogGTIDLogEvent
   | BinLogXidEvent
   | BinLogRowEvent
   | BinLogRowUpdateEvent
-  | BinLogTableMapEvent;
+  | BinLogTableMapEvent
+  | BinLogQueryEvent;
 
 // @vlasky/mysql Connection
 export interface MySQLConnection {
