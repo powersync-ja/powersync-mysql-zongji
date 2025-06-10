@@ -1,4 +1,5 @@
 import { Socket } from 'net';
+import { EventEmitter } from 'events';
 
 /**
  *  The types described here were added on an adhoc basis based on requirements in the Powersync Service.
@@ -177,7 +178,7 @@ export interface MySQLConnection {
   query(sql: string, callback: (error: any, results: any, fields: any) => void): void;
 }
 
-export declare class ZongJi {
+export declare class ZongJi extends EventEmitter {
   stopped: boolean;
   connection: MySQLConnection;
   constructor(options: ZongjiOptions);
@@ -186,6 +187,4 @@ export declare class ZongJi {
   stop(): void;
   pause(): void;
   resume(): void;
-
-  on(type: 'binlog' | string, callback: (event: BinLogEvent) => void): void;
 }
