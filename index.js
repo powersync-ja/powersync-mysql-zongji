@@ -253,9 +253,8 @@ ZongJi.prototype.start = function (options = {}) {
       case 'Rotate':
         if (this.options.filename !== event.binlogName) {
           this.options.filename = event.binlogName;
-          this.emit('binlog', event);
         }
-        return;
+        break;
     }
     this.options.position = event.nextPosition;
     this.emit('binlog', event);
