@@ -21,10 +21,11 @@ export type ZongjiOptions = {
 
 /**
  *  Record specifying a database and specific tables. ie. ['MyDatabase']: ['table1', 'table2']
- *  Alternatively specifying true will include all tables in the database.
+ *  OR a filter function that returns true for tables that should be included
+ *  OR specifying true will include all tables in the database.
  */
 interface DatabaseFilter {
-  [databaseName: string]: string[] | true;
+  [databaseName: string]: string[] | true | ((table: string) => boolean);
 }
 
 export type StartOptions = {

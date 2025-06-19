@@ -45,9 +45,32 @@ tap.test('Unit test', (test) => {
     test.end();
   });
 
+  test.test('FilterFunction includes', (test) => {
+    zongji._filters({
+      includeSchema: { db1: (table) => table === 'just_me' }
+    });
+    test.ok(!zongji._skipSchema('db1', 'just_me'));
+    test.ok(zongji._skipSchema('db2', 'anything_else'));
+    test.ok(zongji._skipSchema('db1', 'not_me'));
+
+    test.end();
+  });
+
   test.test((test) => {
     zongji._filters({
       excludeSchema: { db1: ['not_me'] }
+    });
+
+    test.ok(!zongji._skipSchema('db1', 'anything_else'));
+    test.ok(!zongji._skipSchema('db2', 'anything_else'));
+    test.ok(zongji._skipSchema('db1', 'not_me'));
+
+    test.end();
+  });
+
+  test.test('FilterFunction excludes', (test) => {
+    zongji._filters({
+      excludeSchema: { db1: (table) => table === 'not_me' }
     });
 
     test.ok(!zongji._skipSchema('db1', 'anything_else'));
@@ -79,7 +102,7 @@ tap.test('Unit test', (test) => {
   test.end();
 });
 
-tap.test('Exclue all the schema', (test) => {
+tap.test('Exclude all the schema', (test) => {
   const zongji = new ZongJi(settings.connection);
 
   const eventLog = [];
