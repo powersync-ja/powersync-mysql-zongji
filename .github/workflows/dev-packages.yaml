@@ -4,6 +4,11 @@ name: Create Dev Release
 
 on:
   push:
+    branches:
+      - '**'
+      - '!main' # excludes main, this is handled by changesets
+    tags-ignore:
+      - '**'
 
 jobs:
   publish:
