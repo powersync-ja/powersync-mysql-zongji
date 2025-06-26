@@ -1,4 +1,5 @@
 import { Socket } from 'net';
+import { EventEmitter } from 'events';
 
 /**
  *  The types described here were added on an adhoc basis based on requirements in the Powersync Service.
@@ -20,10 +21,11 @@ export type ZongjiOptions = {
 
 /**
  *  Record specifying a database and specific tables. ie. ['MyDatabase']: ['table1', 'table2']
- *  Alternatively specifying true will include all tables in the database.
+ *  OR a filter function that returns true for tables that should be included
+ *  OR specifying true will include all tables in the database.
  */
 interface DatabaseFilter {
-  [databaseName: string]: string[] | true;
+  [databaseName: string]: string[] | true | ((table: string) => boolean);
 }
 
 export type StartOptions = {
@@ -153,13 +155,22 @@ export type BinLogTableMapEvent = BaseBinLogEvent & {
   columnTypes: number[];
 };
 
+export type BinLogQueryEvent = BaseBinLogEvent & {
+  query: string;
+  executionTime: number;
+  errorCode: number;
+  schema: string;
+  statusVars: string;
+};
+
 export type BinLogEvent =
   | BinLogRotationEvent
   | BinLogGTIDLogEvent
   | BinLogXidEvent
   | BinLogRowEvent
   | BinLogRowUpdateEvent
-  | BinLogTableMapEvent;
+  | BinLogTableMapEvent
+  | BinLogQueryEvent;
 
 // @vlasky/mysql Connection
 export interface MySQLConnection {
@@ -168,7 +179,7 @@ export interface MySQLConnection {
   query(sql: string, callback: (error: any, results: any, fields: any) => void): void;
 }
 
-export declare class ZongJi {
+export declare class ZongJi extends EventEmitter {
   stopped: boolean;
   connection: MySQLConnection;
   constructor(options: ZongjiOptions);
@@ -177,6 +188,4 @@ export declare class ZongJi {
   stop(): void;
   pause(): void;
   resume(): void;
-
-  on(type: 'binlog' | string, callback: (event: BinLogEvent) => void): void;
 }
