@@ -1,5 +1,13 @@
 # @powersync/mysql-zongji
 
+## 0.3.0
+
+### Minor Changes
+
+- 65ca2b2: - Added type definitions for binlog query event
+  - Added the ability to provide a table filter function for including/excluding binlog events
+  - Updated Zongji class type definition
+
 ## 0.2.0
 
 ### Minor Changes
