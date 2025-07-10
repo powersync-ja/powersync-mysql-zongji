@@ -1,5 +1,11 @@
 # @powersync/mysql-zongji
 
+## 0.4.0
+
+### Minor Changes
+
+- ee0fc27: Emit error when an unrecoverable schema change was encountered
+
 ## 0.3.0
 
 ### Minor Changes
