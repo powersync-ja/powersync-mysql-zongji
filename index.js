@@ -132,7 +132,9 @@ ZongJi.prototype._fetchTableInfo = function (tableMapEvent, next) {
     if (rows.length === 0) {
       this.emit(
         'error',
-        new Error('Insufficient permissions to access: ' + tableMapEvent.schemaName + '.' + tableMapEvent.tableName)
+        new Error(
+          `Insufficient permissions to access [${tableMapEvent.schemaName}.${tableMapEvent.tableName}], or the table has been dropped.`
+        )
       );
       // This is a fatal error, no additional binlog events will be
       // processed since next() will never be called
@@ -249,7 +251,7 @@ ZongJi.prototype.start = function (options = {}) {
               event.updateColumnInfo();
             } catch (error) {
               const schemaError = new Error(
-                `Event received for table <${event.tableName}> that does not match the current schema.`,
+                `Event received for table [${event.schemaName}.${event.tableName}] that does not match its current schema.`,
                 {
                   cause: error
                 }
