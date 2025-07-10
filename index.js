@@ -248,8 +248,10 @@ ZongJi.prototype.start = function (options = {}) {
             try {
               event.updateColumnInfo();
             } catch (error) {
-              const error = new Error('Historical event received with unrecoverable schema changes.', { cause: err });
-              this.emit('error', error);
+              const schemaError = new Error('Historical event received with unrecoverable schema changes.', {
+                cause: err
+              });
+              this.emit('error', schemaError);
               return;
             }
             this.emit('binlog', event);
