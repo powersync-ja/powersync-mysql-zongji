@@ -242,8 +242,16 @@ ZongJi.prototype.start = function (options = {}) {
         if (!tableMap || tableMap.tableName !== event.tableName || tableMap.columns.length !== event.columnCount) {
           this.connection.pause();
           this._fetchTableInfo(event, () => {
-            // merge the column info with metadata
-            event.updateColumnInfo();
+            // Merge the column info with metadata if available
+            // This relies on the schema info in the DB. Some schema changes like dropped tables and columns
+            // mean that an unrecoverable mismatch can occur. Catch and emit these errors when they happen
+            try {
+              event.updateColumnInfo();
+            } catch (error) {
+              const error = new Error('Historical event received with unrecoverable schema changes.', { cause: err });
+              this.emit('error', error);
+              return;
+            }
             this.emit('binlog', event);
             this.connection.resume();
           });
