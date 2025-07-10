@@ -132,7 +132,9 @@ ZongJi.prototype._fetchTableInfo = function (tableMapEvent, next) {
     if (rows.length === 0) {
       this.emit(
         'error',
-        new Error('Insufficient permissions to access: ' + tableMapEvent.schemaName + '.' + tableMapEvent.tableName)
+        new Error(
+          `Insufficient permissions to access [${tableMapEvent.schemaName}.${tableMapEvent.tableName}], or the table has been dropped.`
+        )
       );
       // This is a fatal error, no additional binlog events will be
       // processed since next() will never be called
@@ -242,8 +244,21 @@ ZongJi.prototype.start = function (options = {}) {
         if (!tableMap || tableMap.tableName !== event.tableName || tableMap.columns.length !== event.columnCount) {
           this.connection.pause();
           this._fetchTableInfo(event, () => {
-            // merge the column info with metadata
-            event.updateColumnInfo();
+            // Merge the column info with metadata if available
+            // This relies on the schema info in the DB. Some schema changes like dropped tables and columns
+            // mean that an unrecoverable mismatch can occur. Catch and emit these errors when they happen
+            try {
+              event.updateColumnInfo();
+            } catch (error) {
+              const schemaError = new Error(
+                `Event received for table [${event.schemaName}.${event.tableName}] that does not match its current schema.`,
+                {
+                  cause: error
+                }
+              );
+              this.emit('error', schemaError);
+              return;
+            }
             this.emit('binlog', event);
             this.connection.resume();
           });
