@@ -249,7 +249,7 @@ ZongJi.prototype.start = function (options = {}) {
               event.updateColumnInfo();
             } catch (error) {
               const schemaError = new Error('Historical event received with unrecoverable schema changes.', {
-                cause: err
+                cause: error
               });
               this.emit('error', schemaError);
               return;
