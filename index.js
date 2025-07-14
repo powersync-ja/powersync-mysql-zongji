@@ -342,12 +342,12 @@ ZongJi.prototype._skipSchema = function (database, table) {
     (database in includes &&
       (includes[database] === true ||
         (Array.isArray(includes[database]) && includes[database].indexOf(table) > -1) ||
-        (typeof includes[database] === 'function' && includes[database](table))));
+        (typeof includes[database] === 'function' && includes[database](table, database))));
   let excluded =
     database in excludes &&
     (excludes[database] === true ||
       (Array.isArray(excludes[database]) && excludes[database].indexOf(table) > -1) ||
-      (typeof excludes[database] === 'function' && excludes[database](table)));
+      (typeof excludes[database] === 'function' && excludes[database](table, database)));
 
   return excluded || !included;
 };
