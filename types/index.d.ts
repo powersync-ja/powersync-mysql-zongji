@@ -57,6 +57,11 @@ export type StartOptions = {
    *  Unique server ID for this replication client.
    */
   serverId?: number;
+
+  /**
+   * Pass `true` to only emit binlog events that occur after ZongJi's instantiation.
+   */
+  startAtEnd?: boolean;
 };
 
 export type ColumnSchema = {
