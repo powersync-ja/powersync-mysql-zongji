@@ -106,7 +106,7 @@ export type BaseBinLogEvent = {
   useChecksum: boolean;
 };
 
-export type BinLogHeartbeatEvent = {
+export type BinLogHeartbeatEvent = BaseBinLogEvent & {
   binlogName: string;
   position: number;
 };
