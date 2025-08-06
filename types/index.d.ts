@@ -111,6 +111,15 @@ export type BaseBinLogEvent = {
   useChecksum: boolean;
 };
 
+export type BinLogHeartbeatEvent = BaseBinLogEvent & {
+  binlogName: string;
+};
+
+export type BinLogHeartbeatEvent_V2 = BaseBinLogEvent & {
+  binlogName: string;
+  position: string;
+};
+
 export type BinLogRotationEvent = BaseBinLogEvent & {
   binlogName: string;
   position: number;
@@ -170,6 +179,8 @@ export type BinLogQueryEvent = BaseBinLogEvent & {
 
 export type BinLogEvent =
   | BinLogRotationEvent
+  | BinLogHeartbeatEvent
+  | BinLogHeartbeatEvent_V2
   | BinLogGTIDLogEvent
   | BinLogXidEvent
   | BinLogRowEvent
