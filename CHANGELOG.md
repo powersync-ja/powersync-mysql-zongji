@@ -1,5 +1,14 @@
 # @powersync/mysql-zongji
 
+## 0.5.0
+
+### Minor Changes
+
+- 1abb7b7: Added binlog hearbeat parsing and type definitions
+  Updated the CodeEvent enum to include the newer MySQL BinLog types
+
+  Exposed startAtEnd option in the Zongji start options. Thank you @svenpaulsen!
+
 ## 0.4.0
 
 ### Minor Changes
