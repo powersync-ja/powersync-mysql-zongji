@@ -68,32 +68,24 @@ function defineTypeTest(name, fields, testRows, customTest) {
           }
         };
 
-        expectEvents(
-          test,
-          eventLog,
-          [
-            expectedWrite
-          ],
-          testRows.length,
-          () => {
-            test.equal(errorLog.length, 0);
+        expectEvents(test, eventLog, [expectedWrite], testRows.length, () => {
+          test.equal(errorLog.length, 0);
 
-            const binlogRows = eventLog.reduce((prev, curr) => {
-              if (curr.getTypeName() === 'WriteRows') {
-                prev = prev.concat(curr.rows);
-              }
-              return prev;
-            }, []);
-
-            if (customTest) {
-              customTest.bind(selectResult)(test, { rows: binlogRows });
-            } else {
-              assert.deepEqual(selectResult, binlogRows);
+          const binlogRows = eventLog.reduce((prev, curr) => {
+            if (curr.getTypeName() === 'WriteRows') {
+              prev = prev.concat(curr.rows);
             }
+            return prev;
+          }, []);
 
-            test.end();
+          if (customTest) {
+            customTest.bind(selectResult)(test, { rows: binlogRows });
+          } else {
+            assert.deepEqual(selectResult, binlogRows);
           }
-        );
+
+          test.end();
+        });
       });
     });
   });
@@ -255,13 +247,77 @@ defineTypeTest(
     ["'01:27:28'"],
     ["'-01:07:08'"],
     ["'-01:27:28'"]
-  ]
+  ],
+  function (_, event) {
+    const values = event.rows.map((e) => e.col0);
+    assert.deepEqual(values, [
+      { isNegative: true, hour: 0, minute: 0, second: 1, fraction: undefined },
+      { isNegative: false, hour: 0, minute: 0, second: 0, fraction: undefined },
+      { isNegative: false, hour: 0, minute: 7, second: 0, fraction: undefined },
+      { isNegative: false, hour: 20, minute: 0, second: 0, fraction: undefined },
+      { isNegative: false, hour: 19, minute: 0, second: 0, fraction: undefined },
+      { isNegative: false, hour: 4, minute: 0, second: 0, fraction: undefined },
+      { isNegative: true, hour: 838, minute: 59, second: 59, fraction: undefined },
+      { isNegative: false, hour: 838, minute: 59, second: 59, fraction: undefined },
+      { isNegative: false, hour: 1, minute: 7, second: 8, fraction: undefined },
+      { isNegative: false, hour: 1, minute: 27, second: 28, fraction: undefined },
+      { isNegative: true, hour: 1, minute: 7, second: 8, fraction: undefined },
+      { isNegative: true, hour: 1, minute: 27, second: 28, fraction: undefined }
+    ]);
+  }
+);
+
+defineTypeTest(
+  'time_fraction',
+  ['TIME(3) NULL', 'DATETIME(6) NULL', 'TIMESTAMP(2) NULL'],
+  [["'17:51:04.777'", "'2018-09-08 17:51:04.777'", "'2018-09-08 17:51:04.777'"]],
+  function (_, event) {
+    assert.deepEqual(event.rows, [
+      {
+        col0: {
+          isNegative: false,
+          hour: 17,
+          minute: 51,
+          second: 4,
+          fraction: {
+            fraction: 777,
+            precision: 3
+          }
+        },
+        col1: {
+          year: 2018,
+          month: 9,
+          day: 8,
+          hour: 17,
+          minute: 51,
+          second: 4,
+          fraction: {
+            fraction: 777000,
+            precision: 6
+          }
+        },
+        col2: {
+          fraction: { fraction: 78, precision: 2 },
+          secondsFromEpoch: 1536429064
+        }
+      }
+    ]);
+  }
 );
 
 defineTypeTest(
   'datetime_no_fraction',
   ['DATETIME NULL'],
-  [["'1000-01-01 00:00:00'"], ["'9999-12-31 23:59:59'"], ["'2014-12-27 01:07:08'"]]
+  [["'1000-01-01 00:00:00'"], ["'9999-12-31 23:59:59'"], ["'2014-12-27 01:07:08'"]],
+  function (_, event) {
+    assert.deepEqual(event.rows, [
+      { col0: { year: 1000, month: 1, day: 1, hour: 0, minute: 0, second: 0, fraction: undefined } },
+      { col0: { year: 9999, month: 12, day: 31, hour: 23, minute: 59, second: 59, fraction: undefined } },
+      {
+        col0: { year: 2014, month: 12, day: 27, hour: 1, minute: 7, second: 8, fraction: undefined }
+      }
+    ]);
+  }
 );
 
 defineTypeTest(
@@ -271,7 +327,22 @@ defineTypeTest(
     ["'1000-01-01'", "'1970-01-01 00:00:01'", 1901],
     ["'9999-12-31'", "'2038-01-18 03:14:07'", 2155],
     ["'2014-12-27'", "'2014-12-27 01:07:08'", 2014]
-  ]
+  ],
+  function (_, event) {
+    assert.deepEqual(event.rows, [
+      { col0: { year: 1000, month: 1, day: 1 }, col1: { secondsFromEpoch: 1, fraction: undefined }, col2: 1901 },
+      {
+        col0: { day: 31, month: 12, year: 9999 },
+        col1: { secondsFromEpoch: 2147397247, fraction: undefined },
+        col2: 2155
+      },
+      {
+        col0: { year: 2014, month: 12, day: 27 },
+        col1: { secondsFromEpoch: 1419642428, fraction: undefined },
+        col2: 2014
+      }
+    ]);
+  }
 );
 
 defineTypeTest(
