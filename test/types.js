@@ -68,32 +68,24 @@ function defineTypeTest(name, fields, testRows, customTest) {
           }
         };
 
-        expectEvents(
-          test,
-          eventLog,
-          [
-            expectedWrite
-          ],
-          testRows.length,
-          () => {
-            test.equal(errorLog.length, 0);
+        expectEvents(test, eventLog, [expectedWrite], testRows.length, () => {
+          test.equal(errorLog.length, 0);
 
-            const binlogRows = eventLog.reduce((prev, curr) => {
-              if (curr.getTypeName() === 'WriteRows') {
-                prev = prev.concat(curr.rows);
-              }
-              return prev;
-            }, []);
-
-            if (customTest) {
-              customTest.bind(selectResult)(test, { rows: binlogRows });
-            } else {
-              assert.deepEqual(selectResult, binlogRows);
+          const binlogRows = eventLog.reduce((prev, curr) => {
+            if (curr.getTypeName() === 'WriteRows') {
+              prev = prev.concat(curr.rows);
             }
+            return prev;
+          }, []);
 
-            test.end();
+          if (customTest) {
+            customTest.bind(selectResult)(test, { rows: binlogRows });
+          } else {
+            assert.deepEqual(selectResult, binlogRows);
           }
-        );
+
+          test.end();
+        });
       });
     });
   });
@@ -256,6 +248,21 @@ defineTypeTest(
     ["'-01:07:08'"],
     ["'-01:27:28'"]
   ]
+);
+
+defineTypeTest(
+  'time_fraction',
+  ['TIME(3) NULL', 'DATETIME(6) NULL', 'TIMESTAMP(2) NULL'],
+  [["'17:51:04.777'", "'2018-09-08 17:51:04.777'", "'2018-09-08 17:51:04.777'"]],
+  function (_, event) {
+    assert.deepEqual(event.rows, [
+      {
+        col0: '17:51:04.777',
+        col1: '2018-09-08 17:51:04.777000',
+        col2: '2018-09-08 17:51:04.78'
+      }
+    ]);
+  }
 );
 
 defineTypeTest(
