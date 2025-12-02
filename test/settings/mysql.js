@@ -7,7 +7,7 @@ module.exports = {
     password: 'my_password',
     charset: 'utf8mb4_unicode_ci',
     port: process.env.TEST_MYSQL_PORT,
-    dateStrings: process.env.TEST_DATE_STRINGS === 'true',
+    dateStrings: true,
     database: 'zongji_test',
     timeZone: 'Z'
     // debug: true

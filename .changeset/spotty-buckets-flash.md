@@ -1,5 +1,5 @@
 ---
-'@powersync/mysql-zongji': minor
+'@powersync/mysql-zongji': patch
 ---
 
-Export date and time values as structured fields.
+Add test verifying datetime fraction format.

@@ -15,6 +15,7 @@ export type ZongjiOptions = {
   port?: number;
   user: string;
   password: string;
+  dateStrings?: boolean;
   timeZone?: string;
 };
 
@@ -203,36 +204,4 @@ export declare class ZongJi extends EventEmitter {
   stop(): void;
   pause(): void;
   resume(): void;
-}
-
-export interface MySqlDate {
-  year: number;
-  month: number;
-  day: number;
-}
-
-export interface MySqlTime {
-  isNegative: boolean;
-  hour: number;
-  minute: number;
-  second: number;
-  fraction?: MySqlFraction;
-}
-
-export interface MySqlDateTime extends MySqlDate, MySqlTime {}
-
-export interface MySqlFraction {
-  /**
-   * The digits making up this fraction, e.g. `123` for `.123`, `0.0123`, `0.00123` and so on.
-   */
-  fraction: number;
-  /**
-   * The amount of digits after the decimal.
-   */
-  precision: number;
-}
-
-export interface MySqlTimeStamp {
-  secondsFromEpoch: number;
-  fraction?: MySqlFraction;
 }
