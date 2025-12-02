@@ -1,5 +1,11 @@
 # @powersync/mysql-zongji
 
+## 0.5.1
+
+### Patch Changes
+
+- 232e81d: Add test verifying datetime fraction format.
+
 ## 0.5.0
 
 ### Minor Changes
