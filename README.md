@@ -75,6 +75,8 @@ The `ZongJi` constructor accepts one argument of either:
 
 If a `Connection` or `Pool` object is passed to the constructor, it will not be destroyed/ended by Zongji's `stop()` method.
 
+If there is a `dateStrings` `mysql` configuration option in the connection details or connection, `ZongJi` will follow it.
+
 Each instance includes the following methods:
 
 | Method Name | Arguments              | Description                                                                                  |
@@ -137,6 +139,7 @@ Neither method requires any arguments.
 - :star2: [All types allowed by `mysql`](https://github.com/mysqljs/mysql#type-casting) are supported by this package.
 - :speak_no_evil: 64-bit integer is supported via package big-integer(see #108). If an integer is within the safe range of JS number (-2^53, 2^53), a Number object will returned, otherwise, will return as String.
 - :point_right: `TRUNCATE` statement does not cause corresponding `DeleteRows` event. Use unqualified `DELETE FROM` for same effect.
+- When using fractional seconds with `DATETIME` and `TIMESTAMP` data types in MySQL > 5.6.4, only millisecond precision is available due to the limit of Javascript's `Date` object.
 
 ## Run Tests
 
