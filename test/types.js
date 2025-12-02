@@ -68,32 +68,24 @@ function defineTypeTest(name, fields, testRows, customTest) {
           }
         };
 
-        expectEvents(
-          test,
-          eventLog,
-          [
-            expectedWrite
-          ],
-          testRows.length,
-          () => {
-            test.equal(errorLog.length, 0);
+        expectEvents(test, eventLog, [expectedWrite], testRows.length, () => {
+          test.equal(errorLog.length, 0);
 
-            const binlogRows = eventLog.reduce((prev, curr) => {
-              if (curr.getTypeName() === 'WriteRows') {
-                prev = prev.concat(curr.rows);
-              }
-              return prev;
-            }, []);
-
-            if (customTest) {
-              customTest.bind(selectResult)(test, { rows: binlogRows });
-            } else {
-              assert.deepEqual(selectResult, binlogRows);
+          const binlogRows = eventLog.reduce((prev, curr) => {
+            if (curr.getTypeName() === 'WriteRows') {
+              prev = prev.concat(curr.rows);
             }
+            return prev;
+          }, []);
 
-            test.end();
+          if (customTest) {
+            customTest.bind(selectResult)(test, { rows: binlogRows });
+          } else {
+            assert.deepEqual(selectResult, binlogRows);
           }
-        );
+
+          test.end();
+        });
       });
     });
   });
@@ -291,5 +283,14 @@ defineTypeTest(
     ["'something here'", "'tiny'", "'a'", "'binary'"],
     ["'nothing there'", "'small'", "'b'", "'test123'"],
     [null, null, null, null]
+  ]
+);
+
+defineTypeTest(
+  'charsets',
+  ['CHAR COLLATE latin1_general_ci', 'VARCHAR(15) COLLATE latin1_general_ci', 'TEXT COLLATE latin1_general_ci'],
+  [
+    ["'ascii only'", "'ascii only'", "'ascii only'"],
+    ["'João'", "'João'", "'João'"]
   ]
 );
