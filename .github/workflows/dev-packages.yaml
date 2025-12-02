@@ -5,10 +5,8 @@ name: Create Dev Release
 on:
   push:
     branches:
-      - '**'
-      - '!main' # excludes main, this is handled by changesets
-    tags-ignore:
-      - '**'
+      - main
+  workflow_dispatch: # For dev publishing
 
 jobs:
   publish:
