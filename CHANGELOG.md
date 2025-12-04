@@ -1,5 +1,11 @@
 # @powersync/mysql-zongji
 
+## 0.6.0
+
+### Minor Changes
+
+- 6ac1d60: When the option to render timestamps as strings is enabled, unconditionally emit those values in UTC for consistency.
+
 ## 0.5.1
 
 ### Patch Changes
