@@ -300,3 +300,12 @@ defineTypeTest(
     [null, null, null, null]
   ]
 );
+
+defineTypeTest(
+  'charsets',
+  ['CHAR COLLATE latin1_general_ci', 'VARCHAR(15) COLLATE latin1_general_ci', 'TEXT COLLATE latin1_general_ci'],
+  [
+    ["'ascii only'", "'ascii only'", "'ascii only'"],
+    ["'João'", "'João'", "'João'"]
+  ]
+);
