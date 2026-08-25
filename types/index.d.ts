@@ -209,6 +209,11 @@ export interface MySQLConnection {
    */
   query(options: { sql: string; timeout?: number }, callback: (error: any, results: any, fields: any) => void): void;
   destroy(): void;
+  /**
+   * The connection is an EventEmitter. 'error' is emitted for fatal connection errors that have no
+   * pending query callback to receive them; an unhandled 'error' event crashes the process.
+   */
+  on(event: 'error' | 'unhandledError', listener: (error: any) => void): this;
 }
 
 export declare class ZongJi extends EventEmitter {
