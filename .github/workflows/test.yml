@@ -26,7 +26,6 @@ jobs:
 
       - name: Enable Corepack
         run: |
-          npm install -g corepack@latest
           corepack enable pnpm  
 
       - name: Setup Node.js
