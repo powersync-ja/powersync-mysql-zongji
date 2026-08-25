@@ -20,11 +20,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
-        with:
-          repository: journeyapps-platform/ci-actions
-          token: ${{ secrets.SHARED_GH_TOKEN }}
-          path: .github/ci
-          ref: v1
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
