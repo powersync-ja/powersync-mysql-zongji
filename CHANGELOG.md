@@ -1,5 +1,12 @@
 # @powersync/mysql-zongji
 
+## 0.6.2
+
+### Patch Changes
+
+- 370aa39: Add the 'error' and 'unhandledError' event listener method to the MySQLConnection type.
+- bbe09d6: Updated node version to 24.18.1
+
 ## 0.6.1
 
 ### Patch Changes
